@@ -33,7 +33,8 @@ def find_goal(puzzle):
 
 file_name = "/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Sliding Puzzles 1/slide_puzzle_tests.txt"
 
-with open(file_name) as f: 
+with open(file_name) as f:
     line_list = [line.strip() for line in f]
 
 # print(find_goal(print_puzzle(line_list[1])))
+print(hi)
