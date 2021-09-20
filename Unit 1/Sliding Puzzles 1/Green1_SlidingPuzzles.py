@@ -11,8 +11,6 @@ def BFS(start_node):
     goal_node = find_goal(start_node)
     while fringe:
         v = fringe.popleft()
-        if v[0] == goal_node:
-            return v
         for c in get_children(v[0]):
             if c not in visited:
                 fringe.append((c, count + 1, v))
@@ -20,7 +18,43 @@ def BFS(start_node):
         count += 1
     return -1
 
-# actual movemenet of the game
+def find_path_length(v):
+    print_order = []
+    print_order.append(v[0])
+    while v != None:
+        v = v[2]
+        if v != None:
+            print_order.append(v[0])
+    path_length = len(print_order) - 1
+    return path_length
+
+def BFS_hardest_puzzles(start_node):
+    fringe = deque()
+    count = 0
+    i = 0
+    hardest = []
+    node_length = 0
+    visited = {start_node}
+    fringe.append((start_node, count, None))
+    last_node = None
+    while fringe:
+        v = fringe.popleft()
+        for c in get_children(v[0]):
+            if c not in visited:
+                fringe.append((c, count + 1, v))
+                visited.add(c)
+                i += 1
+        if i == 0:
+            node_length = fringe[-1][1]
+            break
+        i = 0
+        count += 1
+    for elem in fringe:
+        if elem[1] == node_length:
+            hardest.append(elem)        
+    return hardest
+
+
 
 def up(puzzle):
     modified_puzzle = puzzle[2:]
@@ -101,29 +135,6 @@ def goal_test(puzzle):
     else:
         return False
 
-# def change_dimension(puzzle, coordinates):
-    matrix_puzzle = []
-    size = int(puzzle[0:1])
-    puzzle = puzzle[2:]
-    count = 0
-    i = 1
-    index = 0
-    while count != size:
-        if i == 1:
-            matrix_puzzle.append([])
-        matrix_puzzle[count].append(puzzle[index])
-        if i == size:
-            count += 1
-            i = 1
-            index += 1
-            continue
-        i += 1
-        index += 1
-    x, y = coordinates
-    x -= 1
-    y -= 1
-    return matrix_puzzle[y][x]
-
 def print_puzzle(puzzle):
     size = int(puzzle[0])
     puzzle = puzzle[2:]
@@ -168,8 +179,9 @@ def print_path(v):
         path += ("\n\n")
     return (path, path_length)
 
-file_name = "/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Sliding Puzzles 1/slide_puzzle_tests.txt"
+file_name = '/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Sliding Puzzles 1/slide_puzzle_tests.txt'
 line_list = use_file(file_name)
+puzzle = line_list[2]
 
 def print_for_submission():
     for index, puzzle in enumerate(line_list):
@@ -178,3 +190,6 @@ def print_for_submission():
         end = time.perf_counter()
         time_taken = end - start
         print(f"Line {index}: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
+
+hardest_puzzle = BFS_hardest_puzzles(find_goal(puzzle))
+print(hardest_puzzle)
