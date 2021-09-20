@@ -1,24 +1,27 @@
 import math
 from collections import deque
+import time
+import sys
 
 def BFS(start_node):
     fringe = deque()
     count = 0
     visited = {start_node}
-    fringe.append(start_node)
+    fringe.append((start_node, count, None))
+    goal_node = find_goal(start_node)
     while fringe:
         v = fringe.popleft()
-        print(print_puzzle(v))
-        count += 1
-        if goal_test(v):
-            return count
-        for c in get_children(v):
+        if v[0] == goal_node:
+            return v
+        for c in get_children(v[0]):
             if c not in visited:
-                fringe.append(c)
+                fringe.append((c, count + 1, v))
                 visited.add(c)
-    return count
+        count += 1
+    return -1
 
 # actual movemenet of the game
+
 def up(puzzle):
     modified_puzzle = puzzle[2:]
     size = int(puzzle[0])
@@ -93,7 +96,7 @@ def get_children(puzzle):
     return children
 
 def goal_test(puzzle):
-    if print_puzzle(puzzle) == find_goal(puzzle):
+    if puzzle == find_goal(puzzle):
         return True
     else:
         return False
@@ -150,9 +153,28 @@ def use_file(filename):
         line_list = [line.strip() for line in f]
     return line_list
 
+def print_path(v):
+    print_order = []
+    print_order.append(v[0])
+    while v != None:
+        v = v[2]
+        if v != None:
+            print_order.append(v[0])
+    path_length = len(print_order) - 1
+    print_order = print_order[::-1]
+    path = "\n"
+    for index, elem in enumerate(print_order):
+        path += ("State %s: \n" % index) + (print_puzzle(elem))
+        path += ("\n\n")
+    return (path, path_length)
+
 file_name = "/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Sliding Puzzles 1/slide_puzzle_tests.txt"
 line_list = use_file(file_name)
-puzzle = line_list[1]
 
-
-print(BFS(puzzle))
+def print_for_submission():
+    for index, puzzle in enumerate(line_list):
+        start = time.perf_counter()
+        path_length = print_path(BFS(puzzle))[1]
+        end = time.perf_counter()
+        time_taken = end - start
+        print(f"Line {index}: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
