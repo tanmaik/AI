@@ -1,0 +1,15 @@
+def BiBFS(start_node):
+    end_node = find_goal(start_node)
+    start_fringe = deque()
+    end_fringe = deque()
+    count = 0
+    start_visited = {start_node}
+    end_visited = {end_node}
+    start_fringe.append((start_node, count, None))
+    end_fringe.append((end_node, count, None))
+
+
+same bfs but 
+if there is one puzzle that is the same in both start fringe and end fringe,
+then add the two moves together by printing the path of the first one and
+then the reverse path of the second one

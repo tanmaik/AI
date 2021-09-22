@@ -20,46 +20,37 @@ def BFS(start_node):
         count += 1
     return -1
 
-def find_path_length(v):
-    print_order = []
-    print_order.append(v[0])
-    while v != None:
-        v = v[2]
-        if v != None:
-            print_order.append(v[0])
-    path_length = len(print_order) - 1
-    return path_length
-
-# def BFS_hardest_puzzles(start_node):
-    fringe = deque()
+def BiBFS(start_node):
+    end_node = find_goal(start_node)
+    start_fringe = deque()
+    end_fringe = deque()
     count = 0
-    hardest = []
-    visited = {start_node}
-    fringe.append((start_node, count, None))
-    while fringe:
-        v = fringe.popleft()
+    start_visited = {start_node}
+    end_visited = {end_node}
+    start_fringe.append((start_node, count, None))
+    end_fringe.append((end_node, count, None))
+    while start_fringe and end_fringe:
+        v = start_fringe.popleft()
+        t = end_fringe.popleft()
+        if v[0] == end_node:
+            return [v, t]
+        if t[0] == start_node:
+            return [v, t]
         for c in get_children(v[0]):
-            if c not in visited:
-                fringe.append((c, count + 1, v))
-                visited.add(c)
+            if c not in start_visited:
+                start_fringe.append((c, count + 1, v))
+                start_visited.add(c)
+        for c in get_children(t[0]):
+            if c not in end_visited:
+                end_fringe.append((c, count + 1, t))
+                end_visited.add(c)
+        for start_elems in start_fringe:
+            for end_elems in end_fringe:
+                if start_elems[0] == end_elems[0]:
+                    return [start_elems, end_elems]
         count += 1
-    i = find_path_length(v)
-    hardest.append(v)
-    count = 0
-    visited = {start_node}
-    fringe = deque()
-    fringe.append((start_node, count, None))
-    while fringe:
-        v = fringe.popleft()
-        length = len(fringe) + 0
-        for c in get_children(v[0]):
-            if c not in visited:
-                t = (c, count + 1, v)
-                fringe.append(t)
-                if find_path_length(t) == i and t not in hardest:
-                    hardest.append(t)
-                visited.add(c)
-    return hardest
+    return -1
+
 
 def up(puzzle):
     modified_puzzle = puzzle[2:]
@@ -169,30 +160,46 @@ def use_file(filename):
         line_list = [line.strip() for line in f]
     return line_list
 
-def print_path(v):
+def print_path(v, t):
     print_order = []
     print_order.append(v[0])
     while v != None:
         v = v[2]
         if v != None:
             print_order.append(v[0])
-    path_length = len(print_order) - 1
     print_order = print_order[::-1]
     path = "\n"
-    for index, elem in enumerate(print_order):
-        path += ("State %s: \n" % index) + (print_puzzle(elem))
+    i = 0
+    for elem in print_order:
+        path += ("State %s: \n" % i) + (print_puzzle(elem))
         path += ("\n\n")
-    return (path, path_length)
+        i += 1
+    old = print_order
+    print_order = []
+    while t != None:
+        t = t[2]
+        if t != None:
+            if t[0] not in old:
+                print_order.append(t[0])
+    for elem in print_order:
+        # if goal_test(elem) and elem in print_order:
+        #     break
+        path += ("State %s: \n" % i) + (print_puzzle(elem))
+        path += ("\n\n")
+        i += 1
+    return (path, i)
 
-file_name = sys.argv[1]
+file_name = '/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Bidirectional BFS/slide_puzzle_tests.txt'
 line_list = use_file(file_name)
-
+puzzle = line_list[2]
 def print_for_submission():
     for index, puzzle in enumerate(line_list):
         start = time.perf_counter()
-        path_length = find_path_length(BFS(puzzle))
+        solve = BiBFS(puzzle)
+        path_length = print_path(solve[0], solve[1])[1] - 1
         end = time.perf_counter()
         time_taken = end - start
         print(f"Line {index}: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
 
-print_for_submission()
+# print_for_submission()
+print(print_path(BiBFS(puzzle)[0], BiBFS(puzzle)[1])[0])
