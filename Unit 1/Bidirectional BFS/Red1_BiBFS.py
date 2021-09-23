@@ -24,14 +24,20 @@ def BiBFS(start_node):
     end_node = find_goal(start_node)
     start_fringe = deque()
     end_fringe = deque()
+    start_checker = deque()
+    end_checker = deque()
     count = 0
     start_visited = {start_node}
     end_visited = {end_node}
     start_fringe.append((start_node, count, None))
     end_fringe.append((end_node, count, None))
+    start_checker.append(start_node)
+    end_checker.append(end_node)
     while start_fringe and end_fringe:
         v = start_fringe.popleft()
         t = end_fringe.popleft()
+        start_checker.popleft()
+        end_checker.popleft()
         if v[0] == end_node:
             return [v, t]
         if t[0] == start_node:
@@ -39,15 +45,23 @@ def BiBFS(start_node):
         for c in get_children(v[0]):
             if c not in start_visited:
                 start_fringe.append((c, count + 1, v))
+                start_checker.append(c)
                 start_visited.add(c)
+                if start_checker[-1] in end_checker:
+                    index = end_checker.index(start_checker[-1])
+                    return [start_fringe[-1], end_fringe[index]]    
         for c in get_children(t[0]):
             if c not in end_visited:
                 end_fringe.append((c, count + 1, t))
                 end_visited.add(c)
-        for start_elems in start_fringe:
-            for end_elems in end_fringe:
-                if start_elems[0] == end_elems[0]:
-                    return [start_elems, end_elems]
+                end_checker.append(c)
+                if end_checker[-1] in start_checker:
+                    index = start_checker.index(end_checker[-1])
+                    return [start_fringe[index], end_fringe[-1]]
+        # for start_elems in start_fringe:
+        #     for end_elems in end_fringe:
+        #         if start_elems[0] == end_elems[0]:
+        #             return [start_elems, end_elems]
         count += 1
     return -1
 
@@ -160,7 +174,7 @@ def use_file(filename):
         line_list = [line.strip() for line in f]
     return line_list
 
-def print_path(v, t):
+def print_path_prime(v, t):
     print_order = []
     print_order.append(v[0])
     while v != None:
@@ -189,17 +203,38 @@ def print_path(v, t):
         i += 1
     return (path, i)
 
+def print_path(v):
+    print_order = []
+    print_order.append(v[0])
+    while v != None:
+        v = v[2]
+        if v != None:
+            print_order.append(v[0])
+    path_length = len(print_order) - 1
+    print_order = print_order[::-1]
+    path = "\n"
+    for index, elem in enumerate(print_order):
+        path += ("State %s: \n" % index) + (print_puzzle(elem))
+        path += ("\n\n")
+    return (path, path_length)
+
+
 file_name = '/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Bidirectional BFS/slide_puzzle_tests.txt'
 line_list = use_file(file_name)
-puzzle = line_list[2]
+puzzle = line_list[8]
 def print_for_submission():
     for index, puzzle in enumerate(line_list):
         start = time.perf_counter()
         solve = BiBFS(puzzle)
-        path_length = print_path(solve[0], solve[1])[1] - 1
+        path_length = print_path_prime(solve[0], solve[1])[1] - 1
         end = time.perf_counter()
         time_taken = end - start
-        print(f"Line {index}: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
+        print(f"Line {index} with BiBFS: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
+        start = time.perf_counter()
+        solve = BFS(puzzle)
+        path_length = print_path(solve)[1]
+        end = time.perf_counter()
+        time_taken = end - start
+        print(f"Line {index} with BFS: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
 
-# print_for_submission()
-print(print_path(BiBFS(puzzle)[0], BiBFS(puzzle)[1])[0])
+print_for_submission()
