@@ -218,10 +218,9 @@ def print_path(v):
         path += ("\n\n")
     return (path, path_length)
 
-
-file_name = '/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Bidirectional BFS/slide_puzzle_tests.txt'
+file_name = sys.argv[1]
 line_list = use_file(file_name)
-puzzle = line_list[8]
+
 def print_for_submission():
     for index, puzzle in enumerate(line_list):
         start = time.perf_counter()
