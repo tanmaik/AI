@@ -9,7 +9,6 @@ def open_file(dict_file, puzzle_file):
         puzzle_list = [line.split() for line in f]
     return (line_list, puzzle_list)
 
-
 def get_children(w, dict):
     children = []
     letters = ['a', 'b', 'c', 'd', 'e', "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -42,7 +41,6 @@ def print_for_submission(dict_file, puzzle_file):
         else:
             print(path)
     print(f"\nTime to solve all of these puzzles was: {time_taken} seconds")
-        
 
 def print_path(solved):
     if solved == -1:
@@ -77,7 +75,6 @@ def BFS(start_node, goal_node, word_list):
         count += 1
     return -1
 
-dict_file_name = '/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Word Ladders/words_06_letters.txt'
-puzzle_file_name = '/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Word Ladders/puzzles_normal.txt'
+dict_file_name = "/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Word Ladders/words_06_longer.txt"
+puzzle_file_name = "/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Word Ladders/puzzles_longer.txt"
 print_for_submission(dict_file_name, puzzle_file_name)
-# print(open_file(dict_file_name, puzzle_file_name)[1])

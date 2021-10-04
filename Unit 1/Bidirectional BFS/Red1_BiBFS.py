@@ -58,10 +58,6 @@ def BiBFS(start_node):
                 if end_checker[-1] in start_checker:
                     index = start_checker.index(end_checker[-1])
                     return [start_fringe[index], end_fringe[-1]]
-        # for start_elems in start_fringe:
-        #     for end_elems in end_fringe:
-        #         if start_elems[0] == end_elems[0]:
-        #             return [start_elems, end_elems]
         count += 1
     return -1
 
