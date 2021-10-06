@@ -184,7 +184,7 @@ def print_path(v):
         path += ("\n\n")
     return (path, path_length)
 
-file_name = sys.argv[1]
+file_name = '/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Sliding Puzzles/slide_puzzle_tests.txt'
 line_list = use_file(file_name)
 
 def print_for_submission():
@@ -194,5 +194,6 @@ def print_for_submission():
         end = time.perf_counter()
         time_taken = end - start
         print(f"Line {index}: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
+
 
 print_for_submission()
