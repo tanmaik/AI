@@ -2,6 +2,8 @@ import sys
 import time
 from collections import deque
 import math
+from heapq import heappush, heappop, heapify
+import copy
 
 # SEARCH ALGORITHMS
 def BFS(start_node):
@@ -17,7 +19,7 @@ def BFS(start_node):
             if c not in visited:
                 fringe.append((c, v[1] + 1, v))
                 visited.add(c)
-    return -1
+    return None
 def kDFS(start_node, k):
     fringe = []
     fringe.append((start_node, 0, {start_node}))
@@ -27,10 +29,11 @@ def kDFS(start_node, k):
             return v
         if v[1] < k:
             for c in get_children(v[0]):
-                old_set = v[2]
-                old_set.add(c)
-                temp = (c, v[1] + 1, old_set)
-                fringe.append(temp)
+                if c not in v[2]:
+                    old_set = v[2].copy()
+                    old_set.add(c)
+                    temp = (c, v[1] + 1, old_set)
+                    fringe.append(temp)
     return None
 def ID_DFS(start_node):
     max_depth = 0
@@ -39,6 +42,20 @@ def ID_DFS(start_node):
         result = kDFS(start_node, max_depth)
         max_depth += 1
     return result
+def a_star(start_state):
+    closed = set()
+    fringe = []
+    heappush(fringe, (taxicab(start_state), 0, start_state))
+    while fringe:
+        v = heappop(fringe)
+        if goal_test(v[2]):
+            return (v[2], v[1], v[0])
+        if v[2] not in closed:
+            closed.add(v[2])
+            for c in get_children(v[2]):
+                temp = (v[1] + 1 + taxicab(c), v[1] + 1, c)
+                heappush(fringe, temp)
+    return None
 
 # BOARD MOVING
 def up(puzzle):
@@ -91,18 +108,9 @@ def right(puzzle):
     return modified_puzzle
 
 # SUPPLEMENTARY FUNCTIONS
-# def find_path_length(v):
-    print_order = []
-    print_order.append(v[0])
-    while v != None:
-        v = v[2]
-        if v != None:
-            print_order.append(v[0])
-    path_length = len(print_order) - 1
-    return path_length
 def get_children(puzzle):
     children = []
-    size = int(puzzle[0:1])
+    size = int(puzzle[0])
     mod_puzzle = puzzle[2:]
     period_index = mod_puzzle.index(".")
     valid_moves = [True, True, True, True] #left, right, top, bottom
@@ -194,26 +202,77 @@ def solvable(puzzle):
                 return False
 def print_for_submission():
     for index, puzzle in enumerate(line_list):
-        start = time.perf_counter()
-        path_length = BFS(puzzle)[1]
-        end = time.perf_counter()
-        time_taken = end - start
-        print(f"Line {index}: {puzzle[2:]}, BFS - {path_length} moves found in {time_taken} seconds")
-        start1 = time.perf_counter()
-        path_length = ID_DFS(puzzle)[1]
-        end1 = time.perf_counter()
-        time_taken = end1 - start1
-        print(f"Line {index}: {puzzle[2:]}, ID-DFS - {path_length} moves found in {time_taken} seconds\n")
+        time0 = time.perf_counter()
+        search_method = puzzle[-1]
+        puzzle = puzzle[:len(puzzle)-2]
+        if solvable(puzzle):
+            start = time.perf_counter()
+            if search_method == 'B':
+                path_length = BFS(puzzle)[1]
+                end = time.perf_counter()
+                time_taken = end - start
+                print(f"Line {index}: {puzzle[2:]}, BFS - {path_length} moves in {time_taken} seconds\n")  
+            elif search_method == 'I':
+                path_length = ID_DFS(puzzle)[1]
+                end = time.perf_counter()
+                time_taken = end - start
+                print(f"Line {index}: {puzzle[2:]}, ID-DFS - {path_length} moves in {time_taken} seconds\n")
+            elif search_method == 'A':
+                path_length = a_star(puzzle)[1]
+                end = time.perf_counter()
+                time_taken = end - start
+                print(f"Line {index}: {puzzle[2:]}, A* - {path_length} moves in {time_taken} seconds\n")
+            elif search_method == '!':
+                path_length = BFS(puzzle)[1]
+                end = time.perf_counter()
+                time_taken = end - start
+                print(f"Line {index}: {puzzle[2:]}, BFS - {path_length} moves in {time_taken} seconds")
+                start1 = time.perf_counter()
+                path_length = ID_DFS(puzzle)[1]
+                end1 = time.perf_counter()
+                time_taken = end1 - start1
+                print(f"Line {index}: {puzzle[2:]}, ID-DFS - {path_length} moves in {time_taken} seconds")
+                start2 = time.perf_counter()
+                path_length = a_star(puzzle)[1]
+                end2 = time.perf_counter()
+                time_taken = end2 - start2
+                print(f"Line {index}: {puzzle[2:]}, A* - {path_length} moves in {time_taken} seconds\n")
+        else:
+            time1 = time.perf_counter()
+            time_taken = time1 - time0
+            print(f"Line {index}: {puzzle[2:]}, no solution determined in {time_taken} seconds\n")
 def use_file(filename):
     with open(filename) as f:
         #str(int(len(line.strip())**(1/2))) + " " + 
-        line_list = [str(int(len(line.strip())**(1/2))) + " " + line.strip() for line in f]
+        line_list = [line.strip() for line in f]
     return line_list
-def taxicab(puzzle):
-    size = puzzle[0]
+def get2d(puzzle, char):
+    size = int(puzzle[0])
     puzzle = puzzle[2: ]
-    return size
+    try:
+        index = puzzle.index(char)
+    except:
+        return 'No solution found!'
+    count = 0
+    for i in range(0, size):
+        for j in range(0, size):
+            if count == index:
+                return [i, j]
+            count += 1
+def taxicab(puzzle):
+    goal = find_goal(puzzle)
+    moves = 0
+    for char in puzzle[2: ]:
+        if char == '.':
+            continue
+        first = get2d(puzzle, char)
+        second = get2d(goal, char)
+        # print(first, second)
+        y_dis = int(abs(second[1] - first[1]))
+        x_dis = int(abs(second[0] - first[0]))
+        moves += y_dis + x_dis
+    return moves
 
 # NON-FUNCTION CODE
-line_list = use_file('/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 1/Sliding Puzzles/15_puzzles.txt')
+line_list = sys.argv[1]
 print_for_submission()

@@ -144,26 +144,28 @@ word_list, puzzle_list = open_file(dict_file_name, puzzle_file_name)
 # Brainteaser 2: 1625
 
 # Brainteaser 3
-# words = word_list
-# num_clumps = 0
-# while words:
-#     fringe = deque()
-#     count = 0
-#     visited = {words[0]}
-#     fringe.append((words[0], count, None))
-#     while fringe:
-#         v = fringe.popleft()
-#         for c in get_children(v[0], words):
-#             if c not in visited:
-#                 fringe.append((c, count + 1, v))
-#                 visited.add(c)
-#         count += 1
-#     for elem in visited:
-#         words.remove(elem)
-#     num_clumps += 1
+words = word_list
+num_clumps = 0
+while words:
+    fringe = deque()
+    count = 0
+    visited = {words[0]}
+    fringe.append((words[0], count, None))
+    while fringe:
+        v = fringe.popleft()
+        for c in get_children(v[0], words):
+            if c not in visited:
+                fringe.append((c, count + 1, v))
+                visited.add(c)
+        count += 1
+    for elem in visited:
+        words.remove(elem)
+    num_clumps += 1
 
-# num_clumps -= 1568
-# print(num_clumps)
+num_clumps -= 1568
+print(num_clumps)
+
+
 # Brainteaser 3: 450 clumps
 
 # Brainteaser 4
@@ -177,3 +179,8 @@ start = ['drafty']
 
 print(start)
 print(print_path(unlimitedBFS(start[0], word_list))[0])
+
+
+
+
+#  {abased, abases, ...}
