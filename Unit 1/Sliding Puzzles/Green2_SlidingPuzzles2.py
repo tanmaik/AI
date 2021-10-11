@@ -173,7 +173,8 @@ def print_path(v):
         path += ("\n\n")
     return (path, path_length)
 def solvable(puzzle):
-    size = int(puzzle[:2])
+    # print(puzzle)
+    size = int(puzzle[0])
     old_puzzle = puzzle[2:]
     dot = old_puzzle.index('.')
     puzzle = old_puzzle[:dot] + old_puzzle[dot+1:]
@@ -201,10 +202,12 @@ def solvable(puzzle):
             else:
                 return False
 def print_for_submission():
+    line_list = use_file(sys.argv[1])
     for index, puzzle in enumerate(line_list):
         time0 = time.perf_counter()
         search_method = puzzle[-1]
         puzzle = puzzle[:len(puzzle)-2]
+        # print(puzzle, search_method)
         if solvable(puzzle):
             start = time.perf_counter()
             if search_method == 'B':
@@ -274,5 +277,4 @@ def taxicab(puzzle):
     return moves
 
 # NON-FUNCTION CODE
-line_list = sys.argv[1]
 print_for_submission()

@@ -196,4 +196,6 @@ def print_for_submission():
         print(f"Line {index}: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
 
 
-print_for_submission()
+# print_for_submission()
+puzzle = '3 61234.875'
+print(print_path(BFS(puzzle))[0])
