@@ -54,7 +54,7 @@ end = time.perf_counter()
 data_struct_time = end - start
 end, start = 0, 0
 
-# SEARCH
+# SEARCH 
 def get_children(node):
     return routes[node]
 
