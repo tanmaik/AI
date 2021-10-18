@@ -46,9 +46,10 @@ def a_star(start_state):
     closed = set()
     fringe = []
     heappush(fringe, (taxicab(start_state), 0, start_state))
+    goal = find_goal(start_state)
     while fringe:
         v = heappop(fringe)
-        if goal_test(v[2]):
+        if v[2] == goal:
             return (v[2], v[1], v[0])
         if v[2] not in closed:
             closed.add(v[2])
