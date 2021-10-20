@@ -1,24 +1,21 @@
 from copy import copy
+import time
 
 def csp_backtracking(state):
     if None not in state:
         if test_solution(state):
-            print(test_solution(state))
             return state
     var = get_next_unassigned_var(state)
     for val in get_sorted_values(state, var):
         new_state = copy(state)
         new_state[var] = val
-        print(f"new_state: {new_state}")
+        print(new_state)
         result = csp_backtracking(new_state)
         if result: return result
     return None
 
 def get_next_unassigned_var(state): 
-    try: 
-        return state.index(None)
-    except:
-        pass
+    return state.index(None)
 
 def get_sorted_values(state, var):
     non_allowed = set()
@@ -37,20 +34,6 @@ def get_sorted_values(state, var):
 def create_board(size):
     return [None for x in range(size)]
 
-# def goal_test(state):
-#     # size = len(state)
-#     # match = 0 
-#     # for i in state:
-#     #     for n in state:
-#     #         if i == n:
-#     #             match += 1 
-#     #     if match != 1:
-#     #         return False
-#     #     match = 0
-#     if state == [0, 4, 7, 5, 2, 6, 1, 3]:
-#         return True
-#     return False
-
 def test_solution(state):
     for var in range(len(state)):
         left = state[var]
@@ -60,15 +43,24 @@ def test_solution(state):
             left -= 1
             right += 1
             if state[compare] == middle:
-                print(var, "middle", compare)
+                # print(var, "middle", compare)
                 return False
             if left >= 0 and state[compare] == left:
-                print(var, "left", compare)
+                # print(var, "left", compare)
                 return False 
             if right < len(state) and state[compare] == right:
-                print(var, "right", compare)
+                # print(var, "right", compare)
                 return False
     return True
 
+def print_board(board):
+    print("-"*len(board))
+    for elem in board:
+        s = ("*") * elem
+        s += ("Q")
+        s += ("*") * (len(board) - len(s))
+        print(s)
+    print("-"*len(board))
 
-print(csp_backtracking(create_board(8)))
+x = 30
+print_board(csp_backtracking(create_board(x)))
