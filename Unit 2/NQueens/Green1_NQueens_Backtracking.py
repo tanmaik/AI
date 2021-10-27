@@ -1,5 +1,6 @@
 from copy import copy
 import time
+import random
 
 def csp_backtracking(state):
     if None not in state:
@@ -9,13 +10,17 @@ def csp_backtracking(state):
     for val in get_sorted_values(state, var):
         new_state = copy(state)
         new_state[var] = val
-        print(new_state)
+        # print(new_state)
         result = csp_backtracking(new_state)
         if result: return result
     return None
 
-def get_next_unassigned_var(state): 
-    return state.index(None)
+def get_next_unassigned_var(state):
+    l = [] 
+    for index, elem in enumerate(state):
+        if not elem:
+            l.append(index)
+    return random.choice(l)
 
 def get_sorted_values(state, var):
     non_allowed = set()
@@ -62,5 +67,8 @@ def print_board(board):
         print(s)
     print("-"*len(board))
 
-x = 30
-print_board(csp_backtracking(create_board(x)))
+start = time.perf_counter()
+for x in range(30, 45):
+    print(f"{x}x{x} board:", csp_backtracking(create_board(x)))
+end = time.perf_counter()
+print((end-start), "seconds")
