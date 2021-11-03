@@ -121,10 +121,6 @@ def print_board(board):
     print("- "*len(board))
 
 
-start = time.perf_counter()
-i = 8
-finish = []
-while i < 201:
-    finish.append(incremental(create_board(i)))
-    print(i, "x", i)
-    i += 1
+for x in range(8, 1000):
+    print(test_solution(incremental(create_board(x))))
+    print(x, "x", x)
