@@ -40,9 +40,18 @@ def generate_constraint_sets(puzzle, s_w, s_h):
         constraint_sets.append({x + n*size for x in range(size)})
     for n in range(size):
         constraint_sets.append({n + x*size for x in range(size)})
-    for n in range(size):
-        for n in range(size):
-            
+    for y in range(0, size, s_h):    
+        for x in range(0, size, s_w):
+            toAdd = set()
+            for i in range(0+x, s_w+x):
+                for j in range(0+y, s_h+y):
+                    toAdd.add(i + j)
+            constraint_sets.append(toAdd)
+
+        # for y in range(s_h):
+        #     toAdd = set()
+        #     for i in range():
+        #         for
     return constraint_sets
 
 def find_neighbors(constraint_sets, symbol_set, N):

@@ -6,14 +6,14 @@ def incremental(state):
     while not test_solution(state):
         print(f"{state} with {sum_conflicts(state)} conflicts")
         worst_queen = find_worst_queen(state)
-        best_spot = find_best_column(state, worst_queen)
+        best_spot = find_best_row(state, worst_queen)
         state[worst_queen] = best_spot
     if test_solution(state):
         print(state, " with 0 conflicts")
         return state
     return None
         
-def find_best_column(state, var):
+def find_best_row(state, var):
     temp = copy(state)
     diff_conflicts = []
     for i in range(len(temp)):

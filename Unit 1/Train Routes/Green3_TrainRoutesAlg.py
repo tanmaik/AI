@@ -76,8 +76,8 @@ def dijkstra(start, end):
     return None
 
 def a_star(start, end):
-    start = city_id[start] # get id of start city
-    end = city_id[end]     # get id of end city
+    start = city_id[start]
+    end = city_id[end]
     closed = set()
     fringe = []
     heappush(fringe, (calcd(nodes_location[start], nodes_location[end]), 0, start))
@@ -87,13 +87,13 @@ def a_star(start, end):
             return v[1]
         if v[2] not in closed:
             closed.add(v[2])
-            for c in get_children(v[2]): # c is (node, distance)
-                temp = (calcd(nodes_location[c[0]], nodes_location[end]) + v[1] + c[1], v[1] + c[1], c[0])  
+            for c in get_children(v[2]):
+                temp = (calcd(nodes_location[c[0]], nodes_location[end]) + v[1] + c[1], v[1] + c[1], c[0])
                 heappush(fringe, temp)
     return None
 
 print(f"Time to create data structure: {data_struct_time} seconds")
-start = time.perf_counter()
+start = time.perf_counter() 
 d = dijkstra(sys.argv[1], sys.argv[2])
 end = time.perf_counter()
 print(f"{sys.argv[1]} to {sys.argv[2]} with Dijkstra: {d} in {end - start} seconds")

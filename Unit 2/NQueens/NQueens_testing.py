@@ -121,6 +121,6 @@ def print_board(board):
     print("- "*len(board))
 
 
-for x in range(8, 1000):
-    print(test_solution(incremental(create_board(x))))
+for x in range(8, 100000000):
+    create_board(x)
     print(x, "x", x)
