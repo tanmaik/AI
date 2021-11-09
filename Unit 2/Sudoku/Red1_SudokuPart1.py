@@ -7,9 +7,47 @@ def open_file(filename):
         line_list = [line.strip() for line in f]
     return line_list
 
+def csp_backtracking(state):
+    if test_solution(state):
+        return state
+    var = get_next_unassigned_var(state)
+    for val in get_sorted_values(state, var):
+        temp = copy(state)
+        new_state = temp[0:var] + val + temp[var + 1:]
+        #print(print_puzzle(new_state))
+        result = csp_backtracking(new_state)
+        if result is not None: 
+            return result
+    return None
+
+def get_next_unassigned_var(state):
+    try: 
+        return state.index('.')
+    except:
+        return None
+    
+def get_sorted_values(state, var):
+    n = neighbors[var]
+    allowed = copy(symbol_set)
+    non_allowed = set()
+    for i in n:
+        if state[i] in symbol_set:
+            non_allowed.add(state[i])
+    for x in non_allowed:
+        allowed.remove(x)
+    return allowed
+
+def test_solution(state):
+    test = find_num_symbols(state) 
+    for x in test:
+        if test[x] != N:
+            return False
+    return True
+
 def determine_variables(p):
     N = int(sqrt(len(p)))
-    symbol_set = {x for x in p if x != "."}
+    symbols = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    symbol_set = {symbols[x] for x in range(N)}
     if '.0' in str(sqrt(N)):
         return int(N), symbol_set, int(sqrt(N)), int(sqrt(N))
     subblock_width = 0
@@ -25,11 +63,10 @@ def determine_variables(p):
     return N, symbol_set, subblock_width, subblock_height
 
 def print_puzzle(puzzle):
-    size = int(sqrt(len(puzzle)))
     s = ''
     for i in range(1, len(puzzle) + 1):
         s += puzzle[i - 1] + " "       
-        if i % size == 0:
+        if i % N == 0:
             s += "\n"
     return s
 
@@ -49,9 +86,10 @@ def generate_constraint_sets(puzzle, s_w, s_h):
             constraint_sets.append(toAdd)
     return constraint_sets
 
-def find_neighbors(constraint_sets, symbol_set, N):
+def find_neighbors():
+    constraint_sets = generate_constraint_sets(puzzle, subblock_width, subblock_height)
     neighbors = dict()
-    for n in range(N^2):
+    for n in range(N**2):
         neighbors[n] = set()
         for s in constraint_sets:
             if n in s:
@@ -60,8 +98,18 @@ def find_neighbors(constraint_sets, symbol_set, N):
                 for elem in temp:
                     neighbors[n].add(elem)
     return neighbors
-puzzles = open_file("/Volumes/GoogleDrive-104048612014867030298/My Drive/11th Grade/AI/Unit 2/Sudoku/puzzles_1_standard_easy.txt")
-puzzle = puzzles[0]
-N, symbol_set, subblock_width, subblock_height = determine_variables(puzzle)
-print(print_puzzle(puzzle))
-print(find_neighbors(generate_constraint_sets(puzzle, subblock_width, subblock_height), symbol_set, N))
+
+def find_num_symbols(puzzle):
+    num_symbols = {symbol : 0 for symbol in sorted(list(symbol_set))}
+    for x in puzzle:
+        if x in symbol_set:
+            num_symbols[x] += 1
+    return num_symbols
+
+
+puzzles = open_file(sys.argv[1])
+
+for index, puzzle in enumerate(puzzles):
+    N, symbol_set, subblock_width, subblock_height = determine_variables(puzzle)
+    neighbors = find_neighbors()
+    print(csp_backtracking(puzzle))
