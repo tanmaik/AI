@@ -8,25 +8,24 @@ def open_file(filename):
         line_list = [line.strip() for line in f]
     return line_list
 
-def csp_backtracking(state):
+def csp_backtracking_with_forward_looking(state):
     if test_solution(state): return state
     var = get_most_constrained_var(state)
     for val in get_sorted_values(state, var):
         new_state = copy(state)
         new_state[var] = val
         checked_board = forward_looking(new_state)
-        new_state = copy(checked_board)
         if checked_board is not None:
-            checked_board = constraint_propagation(new_state)
-            result = csp_backtracking(checked_board)
+            result = csp_backtracking_with_forward_looking(checked_board)
             if result is not None: 
                 return result
     return None
 
 
 def forward_looking(state):
-    solved_indices = [index for index, elem in enumerate(state) if len(elem) == 1]
-    visited = {x for x in solved_indices}
+    solved_indices = [index for index, elem in enumerate(state) if len(elem) == 1 and index not in visited]
+    for elem in solved_indices:
+        visited.add(elem)
     while len(solved_indices) > 0:
         index = solved_indices.pop(0)
         value = state[index]
@@ -59,6 +58,14 @@ def test_solution(state):
         if len(var) > 1:
             return False
     return True
+
+def goal(state):
+    test = find_num_symbols(state) 
+    for x in test:
+        if test[x] != N:
+            return False
+    return True
+
 
 def determine_variables(p):
     N = int(sqrt(len(p)))
@@ -138,16 +145,6 @@ def stringToBoard(puzzle):
             board.append(toAdd)
     return board
             
-def constraint_propagation(state):
-    for symbol in symbol_set:
-        for constraint in constraint_sets:
-            symbolCount = []
-            for index in constraint:
-                if symbol in state[index]:
-                    symbolCount.append(index)
-            if len(symbolCount) == 1:
-                state[symbolCount[0]] = symbol
-    return state
 
 puzzles = open_file(sys.argv[1])
 start = time.perf_counter()
@@ -155,18 +152,20 @@ start = time.perf_counter()
 for index, puzzle in enumerate(puzzles):
     N, symbol_set, subblock_width, subblock_height = determine_variables(puzzle)
     neighbors = find_neighbors()
-    constraint_sets = generate_constraint_sets(puzzle, subblock_width, subblock_height)
     state = stringToBoard(puzzle)
+    visited = set()
     new_state = state.copy()
     state = forward_looking(new_state)
-    new_state = state.copy()
-    state = constraint_propagation(new_state)
-    s = csp_backtracking(state)
+    s = csp_backtracking_with_forward_looking(state)
     p = ""
     for elem in s:
         p += elem
-    print(p)
+    print(print_puzzle(p))
+    print(goal(p))
+    visited = None
+
 
 end = time.perf_counter()
+print(end - start)
 
 
