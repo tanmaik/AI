@@ -166,7 +166,8 @@ for index, puzzle in enumerate(puzzles):
     for elem in s:
         p += elem
     print(p)
+    # print(index)
 
 end = time.perf_counter()
-
+print(end - start)
 

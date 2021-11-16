@@ -161,7 +161,6 @@ for index, puzzle in enumerate(puzzles):
     for elem in s:
         p += elem
     print(print_puzzle(p))
-    print(goal(p))
     visited = None
 
 
