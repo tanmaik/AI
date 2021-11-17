@@ -82,16 +82,15 @@ def ai_move(board):
         for move in moves:
             if move[1] == 1:
                 print(f"Moving at {move[2]} results in a win. {move[1]}")
-                wins.append((move[0], move[2]))
             elif move[1] == -1:
                 print(f"Moving at {move[2]} results in a loss. {move[1]}")
             elif move[1] == 0:
                 print(f"Moving at {move[2]} results in a tie. {move[1]}")
+            wins.append((move[1], move[0], move[2]))
         print()
-        choice = random.choice(wins)
-        print(f"I choose space {choice[1]}.")
-        print()
-        return choice[0]
+        choice = max(wins)
+        print(f"I choose space {choice[2]}.")
+        return choice[1]
     elif ai_player == "O":
         possibilites = possible_next_boards(board, ai_player)
         moves = [(elem[0], max_step(elem[0]), elem[1]) for elem in possibilites]
@@ -99,16 +98,15 @@ def ai_move(board):
         for move in moves:
             if move[1] == -1:
                 print(f"Moving at {move[2]} results in a win.")
-                wins.append((move[0], move[2]))
             elif move[1] == 1:
                 print(f"Moving at {move[2]} results in a loss.")
             elif move[1] == 0:
                 print(f"Moving at {move[2]} results in a tie.")
+            wins.append((move[1], move[0], move[2]))
         print()
-        choice = random.choice(wins)
-        print(f"I choose space {choice[1]}.")
-        print()
-        return choice[0]
+        choice = min(wins)
+        print(f"I choose space {choice[2]}.")
+        return choice[1]
     return None
 
 def max_step(board):
@@ -167,3 +165,14 @@ while game_over(board)[0] == False:
             print("Please pick a valid choice.")
             exit()
     
+print(print_board(board))
+
+if game_over(board)[1] == 1 and ai_player == "X":
+    print("I win!")
+elif game_over(board)[1] == -1 and ai_player == "O":
+    print("I win!")
+elif game_over(board)[1] == 0:
+    print("We tied!")
+else:
+    print("You win!")
+exit()
