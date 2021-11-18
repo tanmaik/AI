@@ -1,8 +1,3 @@
-languages = ['Python', 'Java', 'C++', 'French', 'C']
+l = [(1, 'hi'), (3, "hisdasd"), (2, "hi")]
 
-return_value = languages.pop(3)
-
-print('Return Value:', return_value)
-
-# Updated List
-print('Updated List:', languages)
+print(max(l))

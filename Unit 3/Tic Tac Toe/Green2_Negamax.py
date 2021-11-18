@@ -1,6 +1,6 @@
 import sys
 
-board = sys.argv[1]
+board = '.........'
 
 def isEmpty(board):
     for space in board:
@@ -58,7 +58,7 @@ def print_board(board):
         i += 1
     return toPrint
 
-def game_over(board):
+def game_over_X(board):
     win_spots = ["012", "345", "678", "036", "147", "258", "048", "246"]
     score = 0
     for elem in win_spots:
@@ -72,10 +72,25 @@ def game_over(board):
         return True, score
     return False, None
 
+
+def game_over_O(board):
+    win_spots = ["012", "345", "678", "036", "147", "258", "048", "246"]
+    score = 0
+    for elem in win_spots:
+        if board[int(elem[0])] == board[int(elem[1])] and board[int(elem[1])] == board[int(elem[2])] and board[int(elem[0])] == board[int(elem[2])] and board[int(elem[0])] != "." and board[int(elem[1])] != "." and board[int(elem[2])] != ".":
+            if board[int(elem[0])] == 'X':
+                score = -1
+            elif board[int(elem[0])] == 'O':
+                score = 1
+            return True, score
+    if not '.' in board:
+        return True, score
+    return False, None
+
 def ai_move(board):
     if ai_player == "X":
         possibilites = possible_next_boards(board, ai_player)
-        moves = [(elem[0], min_step(elem[0]), elem[1]) for elem in possibilites]
+        moves = [(elem[0], negamax("O", elem[0]), elem[1]) for elem in possibilites]
         wins = []
         for move in moves:
             if move[1] == 1:
@@ -91,7 +106,7 @@ def ai_move(board):
         return choice[1]
     elif ai_player == "O":
         possibilites = possible_next_boards(board, ai_player)
-        moves = [(elem[0], max_step(elem[0]), elem[1]) for elem in possibilites]
+        moves = [(elem[0], negamax("X", elem[0]), elem[1]) for elem in possibilites]
         wins = []
         for move in moves:
             if move[1] == -1:
@@ -107,21 +122,21 @@ def ai_move(board):
         return choice[1]
     return None
 
-def max_step(board):
-    if game_over(board)[0]:    
-        return game_over(board)[1]                           
+def negamax(current_player, board):
+    if current_player == "X":
+        if game_over_X(board)[0]:
+            print(board, game_over_X(board)[1])
+            return game_over_X(board)[1]
+    else:
+        if game_over_O(board)[0]:
+            print(board, game_over_X(board)[1])
+            return game_over_O(board)[1]
     results = list()
-    for next_board in possible_next_boards(board, 'X'): 
-        results.append(min_step(next_board[0]))
-    return max(results)
-
-def min_step(board):
-    if game_over(board)[0]:
-        return game_over(board)[1]
-    results = list()
-    for next_board in possible_next_boards(board, 'O'):
-        results.append(max_step(next_board[0]))
-    return min(results)
+    for next_board in possible_next_boards(board, current_player):
+        if current_player == "X":
+            results.append(-1 * negamax("O", next_board[0]))
+        else:
+            results.append(-1 * negamax("X", next_board[0]))
 
 def possible_next_boards(board, current_player):
     possibilites = []
@@ -134,9 +149,7 @@ def possible_next_boards(board, current_player):
         possibilites.append((temp_board, index))
     return possibilites
 
-
-
-while game_over(board)[0] == False:
+while game_over_X(board)[0] == False:
     print(print_board(board))
     current_player = find_current_player(board)
     if current_player == ai_player:
@@ -164,11 +177,11 @@ while game_over(board)[0] == False:
     
 print(print_board(board))
 
-if game_over(board)[1] == 1 and ai_player == "X":
+if game_over_X(board)[1] == 1 and ai_player == "X":
     print("I win!")
-elif game_over(board)[1] == -1 and ai_player == "O":
+elif game_over_X(board)[1] == -1 and ai_player == "O":
     print("I win!")
-elif game_over(board)[1] == 0:
+elif game_over_X(board)[1] == 0:
     print("We tied!")
 else:
     print("You win!")
