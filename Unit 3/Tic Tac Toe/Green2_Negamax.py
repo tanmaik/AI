@@ -1,6 +1,6 @@
 import sys
 
-board = '.........'
+board = sys.argv[1]
 
 def isEmpty(board):
     for space in board:
@@ -90,7 +90,8 @@ def game_over_O(board):
 def ai_move(board):
     if ai_player == "X":
         possibilites = possible_next_boards(board, ai_player)
-        moves = [(elem[0], negamax("O", elem[0]), elem[1]) for elem in possibilites]
+        moves = [(elem[0], -1 * negamax("O", elem[0]), elem[1]) for elem in possibilites]
+        # print(moves)
         wins = []
         for move in moves:
             if move[1] == 1:
@@ -106,18 +107,18 @@ def ai_move(board):
         return choice[1]
     elif ai_player == "O":
         possibilites = possible_next_boards(board, ai_player)
-        moves = [(elem[0], negamax("X", elem[0]), elem[1]) for elem in possibilites]
+        moves = [(elem[0], -1 * negamax("X", elem[0]), elem[1]) for elem in possibilites]
         wins = []
         for move in moves:
-            if move[1] == -1:
+            if move[1] == 1:
                 print(f"Moving at {move[2]} results in a win.")
-            elif move[1] == 1:
+            elif move[1] == -1:
                 print(f"Moving at {move[2]} results in a loss.")
             elif move[1] == 0:
                 print(f"Moving at {move[2]} results in a tie.")
             wins.append((move[1], move[0], move[2]))
         print()
-        choice = min(wins)
+        choice = max(wins)
         print(f"I choose space {choice[2]}.")
         return choice[1]
     return None
@@ -125,11 +126,9 @@ def ai_move(board):
 def negamax(current_player, board):
     if current_player == "X":
         if game_over_X(board)[0]:
-            print(board, game_over_X(board)[1])
             return game_over_X(board)[1]
     else:
         if game_over_O(board)[0]:
-            print(board, game_over_X(board)[1])
             return game_over_O(board)[1]
     results = list()
     for next_board in possible_next_boards(board, current_player):
@@ -137,6 +136,7 @@ def negamax(current_player, board):
             results.append(-1 * negamax("O", next_board[0]))
         else:
             results.append(-1 * negamax("X", next_board[0]))
+    return max(results)
 
 def possible_next_boards(board, current_player):
     possibilites = []
