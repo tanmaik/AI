@@ -5,13 +5,13 @@ import time
 start = time.perf_counter()
 
 problems = []
-with open("Unit 3/Othello/boards.txt") as f:
+with open("boards.txt") as f:
     for line in f:
         problems.append(line.strip().split())
 
 moves_lists = []
 board_lists = []
-with open("Unit 3/Othello/answers.txt") as g:
+with open("answers.txt") as g:
     for line in g:
         moves = ast.literal_eval(line[line.index("["): line.index("]") + 1])
         if moves == []:
