@@ -7,7 +7,7 @@ print(sys.version)
 time_limit = 2   # Time limit per turn in seconds.  Set to None for no time limit.
 # p1, p2 = sys.argv[1], sys.argv[2]   # Uncomment to use command line arguments.
 p1 = "oth_tanmai_imports.py"
-p2 = "oth_corners_predictable_import.py"
+p2 = "oth_greedy_predictable_import.py"
 players = [p1, p2]
 
 
@@ -83,7 +83,7 @@ def run_game(players):
             outs = timeErr.stdout
             errs = timeErr.stderr
             print("Turn killed after time limit.")
-        if len(errs) > 0:
+        if errs is not None and len(errs) > 0:
             print("Error message from", players[turn] + ":")
             print(errs)
             print()

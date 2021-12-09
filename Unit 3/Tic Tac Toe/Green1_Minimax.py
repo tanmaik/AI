@@ -1,6 +1,6 @@
 import sys
 
-board = sys.argv[1]
+board = '.........'
 
 def isEmpty(board):
     for space in board:
@@ -133,7 +133,6 @@ def possible_next_boards(board, current_player):
         temp_board = board[:index] + current_player + board[index + 1:]
         possibilites.append((temp_board, index))
     return possibilites
-
 
 
 while game_over(board)[0] == False:
