@@ -77,19 +77,13 @@ def print_board(board):
 
 def find_next_move(board, player, depth):
     possible_indices = possible_moves(board, player)
-    if player == 'x':
-        scores = []
-        for index in possible_indices:
-            scores.append(min_step(make_move(board, player, index), depth))
-        print(possible_indices[scores.index(max(scores))], "best move")
-        return (possible_indices[scores.index(max(scores))])
-    else:
-        scores = []
-        for index in possible_indices:
-            scores.append(max_step(make_move(board, player, index), depth))
-        return (possible_indices[scores.index(min(scores))])
+    scores = []
+    for index in possible_indices:
+        scores.append(-1*negamax(player, make_move(board, player, index), depth))
+    print(possible_indices[scores.index(max(scores))], "best move")
+    return (possible_indices[scores.index(max(scores))])
 
-def score(board):
+def score(board, player):
     corners_dict = {
         0: {1, 8, 9},
         7: {6, 14, 15},
@@ -123,7 +117,10 @@ def score(board):
                 score += 2000
     score += int(x_count * 1.5)
     score -= int(o_count * 1.5)
-    return score
+    if player == 'o':
+        return score * -1
+    else:
+        return score
 
 def possible_next_boards(board, token):
     boards = []
@@ -131,28 +128,20 @@ def possible_next_boards(board, token):
         boards.append(make_move(board, token, index))
     return boards
 
-def max_step(board, depth):
+def negamax(player, board, depth):
+    if player == 'x':
+        opponent = 'o'
+    else:
+        opponent = 'x'
     if depth == 1 or (possible_moves(board, 'x') == 0 and possible_moves(board, 'o') == 0):      
-        return score(board)
-    possible_nexts = possible_next_boards(board, 'x')
-    if len(possible_nexts) == 0:
-        return min_step(board, depth - 1)           
+        return score(board, player)
+    possible_nexts = possible_next_boards(board, player)
+    if len( possible_nexts) == 0:
+        return (-1 * negamax(opponent, board, depth - 1))          
     results = list()
     for next_board in possible_nexts: 
-        results.append(min_step(next_board, depth - 1))
+        results.append(-1 * negamax(opponent, next_board, depth - 1))
     return max(results)
-
-def min_step(board, depth):
-    if depth == 1 or (possible_moves(board, 'x') == 0 and possible_moves(board, 'o') == 0):      
-        return score(board)
-    possible_nexts = possible_next_boards(board, 'o')
-    if len(possible_nexts) == 0:
-        return max_step(board, depth - 1)
-    results = list()
-    for next_board in possible_nexts:
-        results.append(max_step(next_board, depth - 1))
-    return min(results)
-
 
 class Strategy():
     logging = True  # Optional
