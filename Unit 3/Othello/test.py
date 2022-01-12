@@ -1,4 +1,5 @@
 import math
+import sys
 inf = 100000000
 ninf = -100000000
 directions = [-11, -10, -9, -1, 1, 9, 10, 11]
@@ -82,12 +83,12 @@ def find_next_move(board, player, depth):
     if player == 'x':
         scores = []
         for index in possible_indices:
-            scores.append(min_step(make_move(board, player, index), depth))
+            scores.append(min_step(make_move(board, player, index), depth, ninf, inf))
         return (possible_indices[scores.index(max(scores))])
     else:
         scores = []
         for index in possible_indices:
-            scores.append(max_step(make_move(board, player, index), depth))
+            scores.append(max_step(make_move(board, player, index), depth, ninf, inf))
         return (possible_indices[scores.index(min(scores))])
 
 def score(board):
@@ -145,7 +146,7 @@ def max_step(board, depth, alpha, beta):
         return score(board)
     possible_nexts = possible_next_boards(board, 'x')
     if len(possible_nexts) == 0:
-        return min_step(board, depth - 1)           
+        return min_step(board, depth - 1, alpha, beta)           
     best = ninf
     for next_board in possible_nexts: 
         val = min_step(next_board, depth - 1, alpha, beta)
@@ -162,7 +163,7 @@ def min_step(board, depth, alpha, beta):
         return score(board)
     possible_nexts = possible_next_boards(board, 'o')
     if len(possible_nexts) == 0:
-        return max_step(board, depth - 1)
+        return max_step(board, depth - 1, alpha, beta)
     best = inf
     for next_board in possible_nexts:
         val = max_step(next_board, depth - 1, alpha, beta)
@@ -173,11 +174,9 @@ def min_step(board, depth, alpha, beta):
             break
     return best
 
-class Strategy():
-    logging = True  # Optional
-    def best_strategy(self, board, player, best_move, still_running):
-        depth = 1
-        for count in range(board.count(".")):  # No need to look more spaces into the future than exist at all
-            best_move.value = find_next_move(board, player, depth)
-            print(f"Choosing {best_move.value} at depth {depth}.")
-            depth += 1
+board = sys.argv[1]
+player = sys.argv[2]
+depth = 1
+for count in range(board.count(".")):
+   print(find_next_move(board, player, depth))
+   depth += 1

@@ -167,7 +167,7 @@ def find_goal(puzzle):
 
 def use_file(filename):
     with open(filename) as f:
-        line_list = [line.strip() for line in f]
+        line_list = ["4 " + line.strip() for line in f]
     return line_list
 
 def print_path_prime(v, t):
@@ -225,11 +225,11 @@ def print_for_submission():
         end = time.perf_counter()
         time_taken = end - start
         print(f"Line {index} with BiBFS: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
-        start = time.perf_counter()
-        solve = BFS(puzzle)
-        path_length = print_path(solve)[1]
-        end = time.perf_counter()
-        time_taken = end - start
-        print(f"Line {index} with BFS: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
+        # start = time.perf_counter()
+        # solve = BFS(puzzle)
+        # path_length = print_path(solve)[1]
+        # end = time.perf_counter()
+        # time_taken = end - start
+        # print(f"Line {index} with BFS: {puzzle[2:]}, {path_length} moves found in {time_taken} seconds")
 
 print_for_submission()

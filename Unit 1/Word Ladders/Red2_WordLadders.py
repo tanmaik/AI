@@ -113,3 +113,4 @@ def print_path_prime(v, t):
 dict_file_name = sys.argv[1]
 puzzle_file_name = sys.argv[2]
 print_for_submission(dict_file_name, puzzle_file_name)
+

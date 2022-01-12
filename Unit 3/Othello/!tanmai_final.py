@@ -1,5 +1,4 @@
 import math
-import sys
 inf = 100000000
 ninf = -100000000
 directions = [-11, -10, -9, -1, 1, 9, 10, 11]
@@ -98,7 +97,7 @@ def score(board):
         56: {57, 48, 49},
         63: {62, 54, 55}
     }
-    score = (len(possible_moves(board, 'x')) - len(possible_moves(board, 'o'))) * 2000
+    score = (len(possible_moves(board, 'x')) - len(possible_moves(board, 'o'))) * 4000
     x_count = 0
     o_count = 0
     for piece in board:
@@ -115,25 +114,25 @@ def score(board):
             return 0
     for corner in corners_dict:
         if board[corner] == 'x':
-            score += 50000
+            score += 75000
         if board[corner] == 'o':
-            score -= 50000
+            score -= 75000
         for c in corners_dict[corner]:
             if board[c] == 'x' and board[corner] == '.':
-                score -= 15000
+                score -= 18000
             if board[c] == 'x' and board[corner] == 'x':
-                score += 1000
+                score += 3000
             if board[c] == 'o' and board[corner] == 'o':
-                score -= 1000
+                score -= 3000
             if board[c] == 'o' and board[corner] == '.':
-                score += 2000
-    if board.count('.') > 42:
-        score -= int(x_count * 1.5)
-        score += int(o_count * 1.5)
-    else:
-        score += int(x_count * 1.5)
-        score -= int(o_count * 1.5)
-    return score
+                score += 18000
+    # if board.count('.') > 42:
+    #     score -= int(x_count * 1.5)
+    #     score += int(o_count * 1.5)
+    # else:
+    #     score += int(x_count * 1.5)
+    #     score -= int(o_count * 1.5)
+    return (score)
 
 def possible_next_boards(board, token):
     boards = []
@@ -149,9 +148,10 @@ def max_step(board, depth, alpha, beta):
         return min_step(board, depth - 1, alpha, beta)           
     best = ninf
     for next_board in possible_nexts: 
-        cur = min_step(next_board, depth - 1, alpha, beta)
-        best = max(best, cur)
+        val = min_step(next_board, depth - 1, alpha, beta)
+        best = max(best, val)
         alpha = max(alpha, best)
+
         if beta <= alpha:
             break
     return best
@@ -165,16 +165,19 @@ def min_step(board, depth, alpha, beta):
         return max_step(board, depth - 1, alpha, beta)
     best = inf
     for next_board in possible_nexts:
-        cur = max_step(next_board, depth - 1, alpha, beta)
-        best = min(best, cur)
+        val = max_step(next_board, depth - 1, alpha, beta)
+        best = min(best, val)
         beta = min(beta, best)
+
         if beta <= alpha:
             break
     return best
 
-board = sys.argv[1]
-player = sys.argv[2]
-depth = 1
-for count in range(board.count(".")):
-   print(find_next_move(board, player, depth))
-   depth += 1
+class Strategy():
+    logging = True  # Optional
+    def best_strategy(self, board, player, best_move, still_running):
+        depth = 1
+        for count in range(board.count(".")):  # No need to look more spaces into the future than exist at all
+            best_move.value = find_next_move(board, player, depth)
+            print(f"Choosing {best_move.value} at depth {depth}.")
+            depth += 1

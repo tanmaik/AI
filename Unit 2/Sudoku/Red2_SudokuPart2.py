@@ -171,3 +171,4 @@ for index, puzzle in enumerate(puzzles):
 end = time.perf_counter()
 print(end - start)
 
+

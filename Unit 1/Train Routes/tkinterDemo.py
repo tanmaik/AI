@@ -3,7 +3,7 @@
 import tkinter as tk
 import time
 
-lines = [] #list of all the lines created
+lines = dict() #list of all the lines created
 
 def create_grid(c):
 	#create all horizontal lines
