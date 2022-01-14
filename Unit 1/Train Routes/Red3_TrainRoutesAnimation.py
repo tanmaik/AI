@@ -50,6 +50,20 @@ for edge in edge_list:
 end = time.perf_counter()
 data_struct_time = end - start
 end, start = 0, 0
+lines = dict()
+latitude_multiplier = -15
+longitude_multiplier = 15
+def create_grid(c):
+    for edge1, edge2 in edge_list:
+        line = c.create_line([(nodes_location[edge1][1]*longitude_multiplier+2050, nodes_location[edge1][0]*latitude_multiplier+950), (nodes_location[edge2][1]*longitude_multiplier+2050, nodes_location[edge2][0]*latitude_multiplier+950)], tag='grid_line')
+        lines[(edge1, edge2)] = line
+
+root = tk.Tk()
+
+canvas = tk.Canvas(root, height=800, width=1200, bg='white')
+create_grid(canvas)
+canvas.pack(expand=True)
+
 
 def get_children(node):
     return routes[node]
@@ -59,16 +73,26 @@ def dijkstra(start, end):
     end = city_id[end]
     closed = set()
     fringe = []
-    heappush(fringe, (0, start))
+    lines_to_update = []
+    count = 1
+    heappush(fringe, (0, start, (start, )))
     while fringe:
         v = heappop(fringe)
         if v[1] == end: # current node matches end node (id)
-            return v[0]
+            return v
         if v[1] not in closed: # if id not visited
             closed.add(v[1])  
             for c in get_children(v[1]): # c is (node, distance)
-                temp = (v[0] + c[1], c[0]) # temp is (current dist + distance, node)
+                temp = (v[0] + c[1], c[0], v[2] + (c[0], )) # temp is (current dist + distance, node)
+                if (v[1], c[0]) in lines.keys():
+                    canvas.itemconfig(lines[(v[1], c[0])], fill="red")
+                    count += 1
+                else:
+                    canvas.itemconfig(lines[(c[0], v[1])], fill="red")
+                    count += 1
                 heappush(fringe, temp)
+        if count % 1000 == 0:
+            root.update()
     return None
 
 def a_star(start, end):
@@ -90,28 +114,13 @@ def a_star(start, end):
 
 # print(f"Time to create data structure: {data_struct_time} seconds")
 # start = time.perf_counter() 
-# d = dijkstra(sys.argv[1], sys.argv[2])
-# end = time.perf_counter()
-# print(f"{sys.argv[1]} to {sys.argv[2]} with Dijkstra: {d} in {end - start} seconds")
-# end, start, d = 0, 0, 0
-# start = time.perf_counter()
-# d = a_star(sys.argv[1], sys.argv[2])
-# end = time.perf_counter()
-# print(f"{sys.argv[1]} to {sys.argv[2]} with A*: {d} in {end - start} seconds")
-# end, start, d = 0, 0, 0
-
-lines = dict()
-latitude_multiplier = -15
-longitude_multiplier = 15
-def create_grid(c):
-    for edge1, edge2 in edge_list:
-        line = c.create_line([(nodes_location[edge1][1]*longitude_multiplier+2050, nodes_location[edge1][0]*latitude_multiplier+950), (nodes_location[edge2][1]*longitude_multiplier+2050, nodes_location[edge2][0]*latitude_multiplier+950)], tag='grid_line')
-        lines[(edge1, edge2)] = line
-
-root = tk.Tk()
-
-canvas = tk.Canvas(root, height=800, width=1200, bg='white')
-create_grid(canvas)
-canvas.pack(expand=True)
+d = dijkstra(sys.argv[1], sys.argv[2])
+path = d[2]
+for count in range(1, len(path)):
+    if (path[count-1], path[count]) in lines.keys():
+        canvas.itemconfig(lines[(path[count-1], path[count])], fill="green", width=3)
+    else:
+        canvas.itemconfig(lines[(path[count], path[count-1])], fill="green", width=3)
+    root.update()
 
 root.mainloop()
