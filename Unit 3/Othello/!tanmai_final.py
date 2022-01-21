@@ -97,7 +97,7 @@ def score(board):
         56: {57, 48, 49},
         63: {62, 54, 55}
     }
-    score = (len(possible_moves(board, 'x')) - len(possible_moves(board, 'o'))) * 4000
+    score = (len(possible_moves(board, 'x')) - len(possible_moves(board, 'o'))) * 15000
     x_count = 0
     o_count = 0
     for piece in board:

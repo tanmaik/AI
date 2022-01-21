@@ -85,10 +85,10 @@ def dijkstra(start, end):
             for c in get_children(v[1]): # c is (node, distance)
                 temp = (v[0] + c[1], c[0], v[2] + (c[0], )) # temp is (current dist + distance, node)
                 if (v[1], c[0]) in lines.keys():
-                    canvas.itemconfig(lines[(v[1], c[0])], fill="red")
+                    canvas.itemconfig(lines[(v[1], c[0])], fill="red", width=1.5)
                     count += 1
                 else:
-                    canvas.itemconfig(lines[(c[0], v[1])], fill="red")
+                    canvas.itemconfig(lines[(c[0], v[1])], fill="red", width=1.5)
                     count += 1
                 heappush(fringe, temp)
         if count % 1000 == 0:
@@ -100,16 +100,25 @@ def a_star(start, end):
     end = city_id[end]
     closed = set()
     fringe = []
-    heappush(fringe, (calcd(nodes_location[start], nodes_location[end]), 0, start))
+    count = 1
+    heappush(fringe, (calcd(nodes_location[start], nodes_location[end]), 0, start, (start, )))
     while fringe:
         v = heappop(fringe)
         if v[2] == end:
-            return v[1]
+            return v
         if v[2] not in closed:
             closed.add(v[2])
             for c in get_children(v[2]):
-                temp = (calcd(nodes_location[c[0]], nodes_location[end]) + v[1] + c[1], v[1] + c[1], c[0])
+                if (v[2], c[0]) in lines.keys():
+                    canvas.itemconfig(lines[(v[2], c[0])], fill="purple", width=1.5)
+                    count += 1
+                else:
+                    canvas.itemconfig(lines[(c[0], v[2])], fill="purple", width=1.5)
+                    count += 1
+                temp = (calcd(nodes_location[c[0]], nodes_location[end]) + v[1] + c[1], v[1] + c[1], c[0], v[3] + (c[0], ))
                 heappush(fringe, temp)
+        if count % 80 == 0:
+            root.update()
     return None
 
 # print(f"Time to create data structure: {data_struct_time} seconds")
@@ -118,9 +127,20 @@ d = dijkstra(sys.argv[1], sys.argv[2])
 path = d[2]
 for count in range(1, len(path)):
     if (path[count-1], path[count]) in lines.keys():
-        canvas.itemconfig(lines[(path[count-1], path[count])], fill="green", width=3)
+        canvas.itemconfig(lines[(path[count-1], path[count])], fill="green", width=5)
     else:
-        canvas.itemconfig(lines[(path[count], path[count-1])], fill="green", width=3)
+        canvas.itemconfig(lines[(path[count], path[count-1])], fill="green", width=5)
     root.update()
 
+canvas.delete("all")
+create_grid(canvas)
+
+a = a_star(sys.argv[1], sys.argv[2])
+path = a[3]
+for count in range(1, len(path)):
+    if (path[count-1], path[count]) in lines.keys():
+        canvas.itemconfig(lines[(path[count-1], path[count])], fill="green", width=5)
+    else:
+        canvas.itemconfig(lines[(path[count], path[count-1])], fill="green", width=5)
+    root.update()
 root.mainloop()

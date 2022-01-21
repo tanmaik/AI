@@ -4,14 +4,14 @@
 
 import sys
 
-textFile = 'wordlist.txt' # sys.argv[1]
-minimumLength = 4 # int(sys.argv[2])
+textFile = sys.argv[1]
+minimumLength = int(sys.argv[2])
 if len(sys.argv) == 4:
     word = sys.argv[3].upper()
     originalWord = sys.argv[3].upper()
 else:
-    word = 'CO'
-    originalWord = 'CO'
+    word = ''
+    originalWord = ''
 
 words = set()
 alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
