@@ -1,4 +1,5 @@
 from math import sqrt
+import sys
 directions = [-11, -10, -9, -1, 1, 9, 10, 11]
 
 def possible_moves(board, token):
@@ -161,11 +162,9 @@ def min_step(board, depth):
     return min(results)
 
 
-class Strategy():
-    logging = True  # Optional
-    def best_strategy(self, board, player, best_move, still_running):
-        depth = 1
-        for count in range(board.count(".")):  # No need to look more spaces into the future than exist at all
-            best_move.value = find_next_move(board, player, depth)
-            print(f"Choosing {best_move.value} at depth {depth}.")
-            depth += 1
+board = sys.argv[1]
+player = sys.argv[2]
+depth = 1
+for count in range(board.count(".")):  # No need to look more spaces into the future than exist at all
+    print(find_next_move(board, player, depth))
+    depth += 1

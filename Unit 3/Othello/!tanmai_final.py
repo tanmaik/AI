@@ -126,12 +126,6 @@ def score(board):
                 score -= 3000
             if board[c] == 'o' and board[corner] == '.':
                 score += 18000
-    # if board.count('.') > 42:
-    #     score -= int(x_count * 1.5)
-    #     score += int(o_count * 1.5)
-    # else:
-    #     score += int(x_count * 1.5)
-    #     score -= int(o_count * 1.5)
     return (score)
 
 def possible_next_boards(board, token):

@@ -4,7 +4,7 @@ import sys
 import re
 
 
-s = "While inside they wined and dined, safe from the howling wind.\nAnd she whined, it seemed, for the 100th time, into the ear of her friend,\nWhy indeed should I wind the clocks up, if they all run down in the end?"
+s = sys.argv[2]
 reg = sys.argv[1]
 reg = reg[1:]
 flags = reg[reg.index("/")+1:]
