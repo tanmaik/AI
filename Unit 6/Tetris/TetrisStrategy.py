@@ -1,14 +1,15 @@
 import sys
 import random
 import math
+import pickle
 
 POPULATION_SIZE = 200
-NUM_CLONES = 40
+NUM_CLONES = 50
 TRIALS = 5
 TOURNAMENT_SIZE = 20
-TOURNAMENT_WIN_PERCENTAGE = .75
-MUTATION_RATE = .2
-STRATEGY_LENGTH = 4
+TOURNAMENT_WIN_PROBABILITY = .83
+MUTATION_RATE = .1
+STRATEGY_LENGTH = 5
 
 pieces = [ # fix to make each orientation in its own group
     [{0: (0, 1), 1: (0, 1), 2: (0, 1), 3: (0, 1)},
@@ -113,13 +114,14 @@ def print_puzzle(board):
 
 
 def heuristic(board, strategy, lines_removed):
-    a, b, c, d = strategy
+    a, b, c, d, e = strategy
     value = 0
     heights = find_heights(board)
     value += a * sum(heights)
     value += b * min(heights)
     value += c * max(heights)
     value += d * (lines_removed)
+    value += e * (board.count("#"))
     return value
 
 
@@ -160,7 +162,8 @@ def play_game(strategy, print_game):
         elif lines_cleared >= 4:
             points += 1200
     return points
-                
+
+
 def fitness_function(strategy):
     game_scores = []
     for count in range(TRIALS):
@@ -175,6 +178,35 @@ def generate_random_strategy():
             multiplier = -1
         strat.append(random.random() * multiplier)
     return strat
+
+def add_child(population):
+    full_tourney = []
+    while len(full_tourney) < (TOURNAMENT_SIZE * 2):
+        toAdd = random.choice(population)
+        if toAdd not in full_tourney:
+            full_tourney.append(toAdd)
+    tourney1 = full_tourney[:TOURNAMENT_SIZE]
+    tourney2 = full_tourney[TOURNAMENT_SIZE:]
+    tourney1.sort(key=lambda x:x[0])
+    tourney2.sort(key=lambda x:x[0])
+    tourney1 = tourney1[::-1]
+    tourney2 = tourney2[::-1]
+    parent1 = 0
+    parent2 = 0
+    for element in tourney1:
+        if random.random() <= TOURNAMENT_WIN_PROBABILITY:
+            parent1 = element[1]
+            break
+    for element in tourney2:
+        if random.random() <= TOURNAMENT_WIN_PROBABILITY:
+            parent2 = element[1]
+            break
+    if parent1 == 0:
+        parent1 = tourney1[0][1]
+    if parent2 == 0:
+        parent2 = tourney2[0][1]
+    child = create_child(parent1, parent2)
+    return child
 
 def create_child(mom, dad):
     like_mom = random.randrange(1, len(mom))
@@ -207,17 +239,25 @@ def create_initial_generation():
 def rank_population(population):
     strat_and_fitness = []
     for index, strategy in enumerate(population):
-        fitness_score = fitness_function(strategy)
-        print(f"Evaluating strategy number {index} --> {fitness_score}")
-        strat_and_fitness.append((fitness_score, strategy))
+        if len(strategy) != 2:
+            fitness_score = fitness_function(strategy)
+            print(f"Evaluating strategy number {index} --> {fitness_score}")
+            strat_and_fitness.append((fitness_score, strategy))
+        else:
+            print(f"Evaluating strategy number {index} --> {strategy[0]}")
+            strat_and_fitness.append(strategy)
     ranked = sorted(strat_and_fitness)
     return ranked[::-1]
 
 gen_num = 0
 going = True
 starting = input("(N)ew process, or (L)oad saved progress? ")
+if not (starting == "N" or starting == "L"):
+    print("Please pick restart the process and pick a valid option.")
+    going = False
+    exit()
 while going:
-    while starting == "N" or starting == "C":
+    if starting == "N":
         g0 = create_initial_generation()
         ranked_g0 = rank_population(g0)
         adding = 0
@@ -228,13 +268,34 @@ while going:
         gen_num += 1
         print(f"Best strategy so far: {ranked_g0[0][1]} with score: {ranked_g0[0][0]}")
         starting = input("(P)lay a game with current best strategy, (S)ave current process, or (C)ontinue? ")
-    while starting == "L":
-        pass
-    while starting == "S":
-        pass
-    while starting == "P":
-        x = play_game(ranked_g0[0][1], True)
+        ranked_gnew = ranked_g0
+    elif starting == "L":
+        file_name = input("What filename? ")
+        pickle_in = open(file_name, "rb")
+        ranked_gnew = pickle.load(pickle_in)
+        print(f"Best strategy so far: {ranked_gnew[0][1]} with score: {ranked_gnew[0][0]}")
+        starting = input("(P)lay a game with current best strategy, (S)ave current process, or (C)ontinue? ")
+    elif starting == "S":
+        file_name = input("What filename? ")
+        pickle_out = open(file_name, "wb")
+        pickle.dump(ranked_gnew, pickle_out)
+        pickle_out.close()
+        exit()
+    elif starting == "P":
+        x = play_game(ranked_gnew[0][1], True)
         print("This game had a score of", x)
         starting = input("(P)lay a game with current best strategy, (S)ave current process, or (C)ontinue? ")
-    print("Please restart the process and pick a valid option.")
-    exit()
+    elif starting == "C":
+        g_new = []
+        for clone in range(NUM_CLONES):
+            g_new.append(ranked_gnew[clone])
+        while len(g_new) < POPULATION_SIZE:
+            g_new.append(add_child(ranked_gnew))
+        ranked_gnew = rank_population(g_new)
+        for x in ranked_gnew:
+            adding += x[0]
+        print(f"Average: {adding/POPULATION_SIZE}")
+        print(f"Generation: {gen_num}")
+        gen_num += 1
+        print(f"Best strategy so far: {ranked_gnew[0][1]} with score: {ranked_gnew[0][0]}")
+        starting = input("(P)lay a game with current best strategy, (S)ave current process, or (C)ontinue? ")
