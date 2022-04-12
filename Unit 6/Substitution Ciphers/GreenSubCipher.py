@@ -1,6 +1,7 @@
 from math import log
 import random
 import sys
+from tqdm import tqdm
 
 POPULATION_SIZE = 750 # the number of strategies in each generation
 NUM_CLONES = 1 # the number of precisely cloned strategies retained from each generation to the next
@@ -197,12 +198,9 @@ def create_child(current_population):
 
 
 population = generate_initial_population()
-print(population)
-i = 0 
-while i < 500:
-    print(decode(toDecode, population[0][0]))
-    print(fitness(4, toDecode, population[0][0]))
-    print()
+for i in tqdm(range(500)):
+    decode(toDecode, population[0][0])
+    fitness(4, toDecode, population[0][0])
     new_generation = []
     for clone in range(NUM_CLONES):
         new_generation.append(population[clone][0])
@@ -211,6 +209,3 @@ while i < 500:
         if child not in new_generation:
             new_generation.append(child)
     population = rank_population(new_generation)
-    i += 1
-    print(i)
-    
