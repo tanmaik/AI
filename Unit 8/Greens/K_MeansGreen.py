@@ -9,6 +9,10 @@ with open('star_data.csv') as f:
 
 K = 6
 CATEGORIES = 5
+K = 6
+CATEGORIES = 5
+K = 6
+CATEGORIES = 5
 means = random.sample(training_set, K)
 means = [[mean] for mean in means]
 old_means = copy(means)
