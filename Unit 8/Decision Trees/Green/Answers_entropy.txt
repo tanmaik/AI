@@ -1,0 +1,5 @@
+Answers for Decision Trees 1 entropy: 
+1)   The entropy is 1. 
+2)   On only Friday, the entropy is 0.971. Otherwise, it is 0.985.
+3)   Average entropy is 0.979. The decrease is 0.021.
+4)   The entropy is 0 for when the "Pat."'s value is Some. The entropy is 1 for when Rain is False. A feature where every value has an entropy of 1 is Rain.
