@@ -1,6 +1,8 @@
 import csv
 from math import log2
 
+from toml import TomlPreserveInlineDictEncoder
+
 data = []
 with open('play_tennis.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
@@ -10,6 +12,8 @@ with open('play_tennis.csv', newline='') as csvfile:
 headers = data[0]
 data.pop(0)
 
+# print(headers)
+# ['Outlook', 'Temp', 'Humidity', 'Wind', 'Play?']
 
 def calculate_entropy_diff(header):
     initial_entropy = 0
@@ -60,5 +64,21 @@ def calculate_entropy_diff(header):
     return initial_entropy - final_calc
 
 
-print(calculate_entropy_diff(3))
+def generate_decision_tree():
+    # Calculate most information gain feature
+    num_categories = len(data[0]) - 1
+    entropy_gain = []
+    for x in range(num_categories):
+        entropy_gain.append(calculate_entropy_diff(x))
+    toSplit = entropy_gain.index(max(entropy_gain))
+    # Split data set on certain feature
+    features = set()
+    for point in data:
+        features.add(point[toSplit])
+    features = list(features)
+    split_data = dict()
+    for feature in features: 
+        split_data[feature] = []
+    print(split_data)
 
+generate_decision_tree()
