@@ -116,7 +116,7 @@ def print_board(board):
 
 
 start = time.perf_counter()
-for i in range(32, 34):
+for i in range(100, 104):
     print(f"{i}x{i} board: {incremental(create_board(i))}")
 end = time.perf_counter()
 print(f"in {end-start} seconds")

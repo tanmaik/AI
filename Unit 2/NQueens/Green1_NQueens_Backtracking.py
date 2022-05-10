@@ -68,7 +68,7 @@ def print_board(board):
     print("-"*len(board))
 
 start = time.perf_counter()
-for x in range(30, 45):
+for x in range(8, 100):
     print(f"{x}x{x} board:", csp_backtracking(create_board(x)))
 end = time.perf_counter()
 print((end-start), "seconds")
