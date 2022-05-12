@@ -1,3 +1,9 @@
+# Code that plays Othello (aka Reversi).
+# by Tanmai Kalisipudi
+# 12/3/21
+
+# Made using the Mini-max algorithm and Alpha-beta bruning
+
 import math
 inf = 100000000
 ninf = -100000000
@@ -77,6 +83,7 @@ def print_board(board):
             s += "\n"
     print(s)
 
+# Calls the minimax algorithm to find the best move depending on the player
 def find_next_move(board, player, depth):
     possible_indices = possible_moves(board, player)
     if player == 'x':
@@ -90,6 +97,7 @@ def find_next_move(board, player, depth):
             scores.append(max_step(make_move(board, player, index), depth, ninf, inf))
         return (possible_indices[scores.index(min(scores))])
 
+# Scoring function to determine the favoribility of any certain board
 def score(board):
     corners_dict = {
         0: {1, 8, 9},
@@ -97,7 +105,7 @@ def score(board):
         56: {57, 48, 49},
         63: {62, 54, 55}
     }
-    score = (len(possible_moves(board, 'x')) - len(possible_moves(board, 'o'))) * 15000
+    score = (len(possible_moves(board, 'x')) - len(possible_moves(board, 'o'))) * 15500
     x_count = 0
     o_count = 0
     for piece in board:
@@ -134,6 +142,8 @@ def possible_next_boards(board, token):
         boards.append(make_move(board, token, index))
     return boards
 
+
+# Main part of the move-picking algorithm: mini-max
 def max_step(board, depth, alpha, beta):
     if depth == 1 or (len(possible_moves(board, 'x')) == 0 and len(possible_moves(board, 'o')) == 0):      
         return score(board)
@@ -142,10 +152,11 @@ def max_step(board, depth, alpha, beta):
         return min_step(board, depth - 1, alpha, beta)           
     best = ninf
     for next_board in possible_nexts: 
+        # Calls the min-step function in order to determine best move of opponent to respond
         val = min_step(next_board, depth - 1, alpha, beta)
+        # Alpha-beta pruning in order to remove unnecessary nodes in the step tree
         best = max(best, val)
         alpha = max(alpha, best)
-
         if beta <= alpha:
             break
     return best
@@ -167,6 +178,8 @@ def min_step(board, depth, alpha, beta):
             break
     return best
 
+
+# Strategy class to connect to Othello server
 class Strategy():
     logging = True  # Optional
     def best_strategy(self, board, player, best_move, still_running):
