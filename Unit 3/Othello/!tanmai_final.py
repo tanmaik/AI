@@ -2,6 +2,8 @@
 # by Tanmai Kalisipudi
 # 12/3/21
 
+# https://othello.tjhsst.edu
+
 # Made using the Mini-max algorithm and Alpha-beta bruning
 
 import math
@@ -83,7 +85,7 @@ def print_board(board):
             s += "\n"
     print(s)
 
-# Calls the minimax algorithm to find the best move depending on the player
+# Calls the minimax algorithm to find the best move depending on the token assigned to it
 def find_next_move(board, player, depth):
     possible_indices = possible_moves(board, player)
     if player == 'x':
@@ -97,7 +99,7 @@ def find_next_move(board, player, depth):
             scores.append(max_step(make_move(board, player, index), depth, ninf, inf))
         return (possible_indices[scores.index(min(scores))])
 
-# Scoring function to determine the favoribility of any certain board
+# Scoring function to determine the favoribility of any certain board depending on the token assigned
 def score(board):
     corners_dict = {
         0: {1, 8, 9},
