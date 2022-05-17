@@ -1,7 +1,5 @@
 import numpy as np
 
-# A demonstration of amazing things in numpy that make working with matrices soooooo easy!
-
 x = np.array([[0, 3], [3, 4]])
 print("Matrix x:")
 print(x)
