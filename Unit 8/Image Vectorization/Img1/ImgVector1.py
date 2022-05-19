@@ -5,7 +5,7 @@ import random
 import sys
 from copy import copy
 
-K = int(sys.argv[2])
+K = 27
 
 
 def naive8(image_file):
@@ -58,8 +58,8 @@ def naive27(image_file):
 
 def k_means(URL):
     i = 0
-    # f = URL 
-    f = io.BytesIO(urllib.request.urlopen(URL).read())
+    f = URL 
+    # f = io.BytesIO(urllib.request.urlopen(URL).read())
     img = Image.open(f) 
     pix = img.load()
     initial_means = []
@@ -131,5 +131,4 @@ def k_means(URL):
     img.show()
     return current_means
 
-k_means(sys.argv[1])
-
+k_means('cat.jpeg')

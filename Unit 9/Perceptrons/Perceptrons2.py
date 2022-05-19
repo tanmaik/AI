@@ -1,5 +1,4 @@
 import copy
-from operator import truth
 import sys
 
 bits = int(sys.argv[1])
