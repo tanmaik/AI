@@ -51,6 +51,7 @@ def trainer(table):
 
 table = truth_table(bits, n)
 w, b = trainer(table)
+w, b = ((-1, 1), 1)
 for xm in range(-20, 20, 1):
     for ym in range(-20, 20, 1):
         x = xm / 10
