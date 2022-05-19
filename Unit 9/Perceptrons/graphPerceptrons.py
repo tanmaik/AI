@@ -71,7 +71,7 @@ xmin, xmax, ymin, ymax = -2, 2, -2, 2
 ticks_frequency = 1
 
 # Plot points
-fig, ax = plt.subplots(figsize=(10, 10))
+fig, ax = plt.subplots(figsize=(5, 5))
 ax.scatter(xs, ys, c=colors)
 
 # Set identical scales for both axes

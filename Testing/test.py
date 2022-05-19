@@ -1,3 +1,3 @@
-import numpy as np
+from random import randrange
 
-print(np.array([[1], [1], [1], [1]]))
+print(randrange(-100, 100))
