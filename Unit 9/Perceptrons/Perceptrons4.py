@@ -42,7 +42,7 @@ elif len(sys.argv) == 3:
 
 elif len(sys.argv) == 1:
     w_list = [None, np.array([[-1, 1, -1, 1], [-1, 1, 1, -1]]), np.array([[1], [1], [1], [1]])]
-    b_list = [None, np.array([[1, 1, 1, 1]]), np.array([[-2.77]])]
+    b_list = [None, np.array([[1, 1, 1, 1]]), np.array([[i]])]
     points = []
     for i in range(500):
         points.append((randrange(-100, 100)/100, randrange(-100, 100)/100))
@@ -59,6 +59,7 @@ elif len(sys.argv) == 1:
             correct += 1
         else:
             print(f"({x}, {y})")
+            pass
         total += 1
     print(correct/total * 100, "%")
 

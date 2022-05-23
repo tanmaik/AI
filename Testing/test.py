@@ -1,3 +1,2 @@
-from random import randrange
-
-print(randrange(-100, 100))
+for x in reversed(range(-10, 11)):
+    print(x)
