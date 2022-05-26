@@ -1,8 +1,6 @@
 import numpy as np
 import sys
 
-from pkg_resources import yield_lines
-
 LEARNING_RATE = .1
 
 x, y = 0, 0
