@@ -24,6 +24,11 @@ def test_prime(n):
         print(n, 'is not prime')
 
 
+primne()
+test_prime(2)
+print(primne())
+print(test_prime(2))
+
 primne = 233
 2prime = 233
 2390342lkajdsflkasjdf = 3129
