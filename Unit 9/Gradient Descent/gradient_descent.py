@@ -16,10 +16,12 @@ else:
 
 if sys.argv[1] == "B":
     while np.linalg.norm(np.array([eval("2 * (x - y**2)"), eval("2 * (-2 * x * y + 2 * y ** 3 + y - 1)")])) >= (10 ** -8):
+
         x = x - (LEARNING_RATE * eval("2 * (x - y**2)"))
         y = y - (LEARNING_RATE * eval("2 * (-2 * x * y + 2 * y ** 3 + y - 1)"))
         partialX = eval("2 * (x - y**2)")
         partialY = eval("2 * (-2 * x * y + 2 * y ** 3 + y - 1)")
+
         print(f"Location: ({x}, {y}). Gradient vector: ({partialX}, {partialY})")
 else:
     while np.linalg.norm(np.array([eval("8*x - 3*y + 24"), eval("4 * (y - 5) - 3*x")])) >= (10 ** -8):

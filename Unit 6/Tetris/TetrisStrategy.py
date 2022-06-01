@@ -9,7 +9,7 @@ TRIALS = 5
 TOURNAMENT_SIZE = 20
 TOURNAMENT_WIN_PROBABILITY = .83
 MUTATION_RATE = .1
-STRATEGY_LENGTH = 5
+STRATEGY_LENGTH = 4
 
 pieces = [ # fix to make each orientation in its own group
     [{0: (0, 1), 1: (0, 1), 2: (0, 1), 3: (0, 1)},
@@ -26,7 +26,7 @@ pieces = [ # fix to make each orientation in its own group
     [{0: (0, 2), 1: (0, 1), 2: (0, 1)},
     {0: (0, 3), 1: (-2, 1)},
     {0: (-1, 1), 1: (-1, 1), 2: (0, 2)},
-    {0: (0, 1), 1: (0, 3)}], 
+    {0: (0, 1), 1: (0, 3)}],
     [{0: (0, 1), 1: (0, 1), 2: (0, 2)},
     {0: (0, 3), 1: (0, 1)},
     {0: (0, 2), 1: (-1, 1), 2: (-1, 1)},
@@ -42,7 +42,7 @@ def string_to_matrix(board):
             matrix.append(toAdd)
             toAdd = []
     return matrix
-            
+
 def matrix_to_string(matrix):
     toReturn = ""
     for row in matrix:
@@ -57,19 +57,19 @@ def add_piece(piece, board, left_most_column, heights):
     if (left_most_column + num_cols - 1) > 9:
         return False
     for current_col in range(left_most_column, left_most_column + num_cols):
-            sums[current_col - left_most_column] = heights[current_col] + piece[current_col - left_most_column][0]  
+            sums[current_col - left_most_column] = heights[current_col] + piece[current_col - left_most_column][0]
     row_to_place = 19 - max(sums)
     if row_to_place < 0:
         return "GAME OVER"
-    for col in piece: 
+    for col in piece:
         for row in range(row_to_place + piece[col][0] - piece[col][1] + 1, row_to_place + piece[col][0] + 1):
-            if row < 0: 
+            if row < 0:
                 return "GAME OVER"
             matrix[row][left_most_column + col] = "#"
     toReturn = matrix_to_string(matrix)
     return check_eliminations(toReturn)
 
-def find_heights(board): 
+def find_heights(board):
     matrix = string_to_matrix(board)
     heights = [0 for x in range(10)]
     for col in range(10):
@@ -82,7 +82,7 @@ def find_heights(board):
                 if matrix[row + 1][col] == '#':
                         heights[col] = 20 - (row + 1)
                         break
-                # except: 
+                # except:
                 #     print_puzzle(board)
                 #     print(matrix)
                 #     print(row, col)
@@ -111,19 +111,40 @@ def print_puzzle(board):
     print("  0 1 2 3 4 5 6 7 8 9  ")
     print()
 
-
-
 def heuristic(board, strategy, lines_removed):
-    a, b, c, d, e = strategy
+    a, b, c, d = strategy
     value = 0
-    heights = find_heights(board)
-    value += a * sum(heights)
-    value += b * min(heights)
-    value += c * max(heights)
+    value += a * sum(find_heights(board))
+    value += b * find_num_holes(board)
+    value += c * find_bumpiness(board)
     value += d * (lines_removed)
-    value += e * (board.count("#"))
     return value
 
+def find_bumpiness(board):
+    heights = find_heights(board)
+    absolute_differences = 0
+    for index, height in enumerate(heights):
+        if index != 0:
+            absolute_differences += abs(heights[index] - heights[index - 1])
+    return absolute_differences
+
+def find_num_holes(board):
+    num_holes = 0
+    matrix = string_to_matrix(board)
+    for r_index, row in enumerate(matrix):
+        for c_index, col in enumerate(row):
+            if col != "#":
+                try:
+                    if matrix[r_index - 1][c_index] == "#":
+                        try:
+                            if matrix[r_index + 1][c_index] == "#":
+                                num_holes += 1
+                        except:
+                            if r_index == 19:
+                                num_holes += 1
+                except:
+                    pass
+    return num_holes
 
 def play_game(strategy, print_game):
     board = ' '*200
@@ -139,7 +160,7 @@ def play_game(strategy, print_game):
                 result = add_piece(orientation, board, left_most, heights)
                 if result:
                     if result == "GAME OVER":
-                        boards.append("")   
+                        boards.append("")
                         scores.append(-1000000000)
                         clearedLines.append(0)
                     else:
@@ -174,7 +195,7 @@ def generate_random_strategy():
     strat = []
     for i in range(STRATEGY_LENGTH):
         multiplier = 1
-        if random.random() < 0.5: 
+        if random.random() < 0.5:
             multiplier = -1
         strat.append(random.random() * multiplier)
     return strat
@@ -223,7 +244,7 @@ def create_child(mom, dad):
             child.append(dad[n])
     if random.random() < MUTATION_RATE:
         multiplier = 1
-        if random.random() < 0.5: 
+        if random.random() < 0.5:
             multiplier = -1
         child[random.randrange(0, len(child))] = (multiplier * random.random())
     return child
@@ -256,6 +277,7 @@ if not (starting == "N" or starting == "L"):
     print("Please pick restart the process and pick a valid option.")
     going = False
     exit()
+
 while going:
     if starting == "N":
         g0 = create_initial_generation()
@@ -273,6 +295,7 @@ while going:
         file_name = input("What filename? ")
         pickle_in = open(file_name, "rb")
         ranked_gnew = pickle.load(pickle_in)
+        gen_num = 2
         print(f"Best strategy so far: {ranked_gnew[0][1]} with score: {ranked_gnew[0][0]}")
         starting = input("(P)lay a game with current best strategy, (S)ave current process, or (C)ontinue? ")
     elif starting == "S":
@@ -299,3 +322,4 @@ while going:
         gen_num += 1
         print(f"Best strategy so far: {ranked_gnew[0][1]} with score: {ranked_gnew[0][0]}")
         starting = input("(P)lay a game with current best strategy, (S)ave current process, or (C)ontinue? ")
+
