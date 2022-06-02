@@ -277,12 +277,11 @@ if not (starting == "N" or starting == "L"):
     print("Please pick restart the process and pick a valid option.")
     going = False
     exit()
-
 while going:
+    adding = 0
     if starting == "N":
         g0 = create_initial_generation()
         ranked_g0 = rank_population(g0)
-        adding = 0
         for x in ranked_g0:
             adding += x[0]
         print(f"Average: {adding/POPULATION_SIZE}")
